@@ -22,12 +22,16 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.demo.entity.Actions;
+import com.example.demo.entity.DefaultAction;
 import com.example.demo.entity.Event;
 import com.example.demo.entity.EventWrapper;
 import com.example.demo.entity.ImageMessages;
+import com.example.demo.entity.Message;
 import com.example.demo.entity.Reply;
-import com.example.demo.entity.ReplyWrapper;
 import com.example.demo.entity.StickerMessages;
+import com.example.demo.entity.Template;
+import com.example.demo.entity.TemplateMessages;
 import com.example.demo.entity.TextMessages;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,10 +44,16 @@ public class LineReplyMessage {
 	@Value("${spring.boot.admin.notify.line.channelSecret}")
 	private String channelSecret;
 
-	@Value("${line.image.originalContentUrl}")
+	@Value("${line.messages.originalContentUrl}")
 	String originalContentUrl;
-	@Value("${line.image.previewImageUrl}")
+	@Value("${line.messages.previewImageUrl}")
 	String previewImageUrl;
+	
+	@Value("${line.messages.thumbnailImageUrl}")
+	String thumbnailImageUrl;
+	
+	@Value("${line.messages.uri}")
+	String uri;
 
 	@Autowired
 	Reply reply;
@@ -56,25 +66,32 @@ public class LineReplyMessage {
 
 	@Autowired
 	ImageMessages imageMessages;
-
+	
 	@Autowired
-	ReplyWrapper replyWrapper;
+	TemplateMessages templateMessages;
+	
+	@Autowired
+	Template template;
+	
+	@Autowired
+	DefaultAction defaultAction;
 
 	@PostMapping("/callback")
-	public void reply(@RequestBody EventWrapper events, @RequestHeader("X-Line-Signature") String line_headers)
+	public ResponseEntity<String> reply(
+			@RequestBody EventWrapper events, 
+			@RequestHeader("X-Line-Signature") String line_headers)
 			throws JsonProcessingException {
 
 		String reply = "https://api.line.me/v2/bot/message/reply";
 		String replyToken = null;
-		String type = null;
+		Message message = null;
 
 //    ------------------- User Evnet -----------------
 		for (Event event : events.getEvents()) {
 			replyToken = event.getReplyToken();
-			type = event.getMessage().getType();
+			message = event.getMessage();
 			System.out.println("JSON:\n" + event);
-
-			System.out.println("Type:" + type);
+			System.out.println("message:" + message);
 		}
 
 //    -------------------- JSON Data Text -----------------------------------
@@ -85,24 +102,25 @@ public class LineReplyMessage {
 
 		RestTemplate restTemplate = new RestTemplate();
 
-		ResponseEntity<String> response = restTemplate.exchange(reply, HttpMethod.POST, sendMessage(type, replyToken),
+		ResponseEntity<String> response = restTemplate.exchange(reply, HttpMethod.POST, sendMessage(message, replyToken),
 				String.class);
-
-		System.out.println(response.getBody());
+		
+		return response;
 	}
 
-	public HttpEntity<String> sendMessage(String type, String replyToken) throws JsonProcessingException {
+	public HttpEntity<String> sendMessage(Message message, String replyToken) throws JsonProcessingException {
 		// 物件轉JSON
 		ObjectMapper objectMapper = new ObjectMapper();
 		List<TextMessages> textList = new ArrayList<>();
 		List<StickerMessages> stickerList = new ArrayList<>();
 		List<ImageMessages> imageList = new ArrayList<>();
+		List<TemplateMessages> templateList = new ArrayList<>();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json");
 		headers.add("Authorization", "Bearer {" + channelToken + "}");
 
-		if (type.equals("sticker")) {
+		if (message.getType().equals("sticker")) {
 //		      ------------------- 貼圖JSON -----------------------
 			stickerMessages.setType("sticker");
 			stickerMessages.setPackageId("11537");
@@ -114,19 +132,64 @@ public class LineReplyMessage {
 
 			return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
 
-		} else if (type.equals("text")) {
+		} else if (message.getType().equals("text")) {
 //		  	  ------------------- 文字JSON -------------------
+			if(message.getText().equals("表單")){
+				
+				templateMessages.setType("template");
+				templateMessages.setAltText("This is a buttons template");
+				
+				template.setType("buttons");
+				template.setThumbnailImageUrl(thumbnailImageUrl);
+				template.setImageAspectRatio("rectangle");
+				template.setImageSize("cover");
+				template.setImageBackgroundColor("#FFFFFF");
+				template.setTitle("貼圖");
+				template.setText("Please select");
+				
+				defaultAction.setType("uri");
+				defaultAction.setLabel("View detail");
+				defaultAction.setUri(uri);
+				
+				Actions actions = new Actions();
+				actions.setType("postback");
+				actions.setLabel("Buy");
+				actions.setData("action=buy&itemid=123");
+				Actions actions1 = new Actions();
+				actions1.setType("postback");
+				actions1.setLabel("Add to cart");
+				actions1.setData("action=add&itemid=123");
+				Actions actions2 = new Actions();
+				actions2.setType("uri");
+				actions2.setLabel("View detail");
+				actions2.setUri(uri);
+				List<Actions> actionsList = new ArrayList<>();
+				actionsList.add(actions);
+				actionsList.add(actions1);
+				actionsList.add(actions2);
+				
+				template.setActions(actionsList);
+				template.setDefaultAction(defaultAction);
+				templateMessages.setTemplate(template);
+				templateList.add(templateMessages);
+				
+				reply.setReplyToken(replyToken);
+				reply.setMessages(templateList);
+				
+				return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
+			}
+			else {
 			textMessages.setType("text");
-			textMessages.setText("收到您的訊息");
+			textMessages.setText("收到您的訊息: " + message.getText());
 			textList.add(textMessages);
 
 			reply.setReplyToken(replyToken);
 			reply.setMessages(textList);
 
 			return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
-
-		} else if (type.equals("image")) {
-//			  	  ------------------- image JSON -------------------
+			}
+		} else if (message.getType().equals("image")) {
+//		------------------- image JSON -------------------
 			imageMessages.setType("image");
 			imageMessages.setOriginalContentUrl(originalContentUrl);
 			imageMessages.setPreviewImageUrl(previewImageUrl);
@@ -161,7 +224,7 @@ public class LineReplyMessage {
 				return true;
 			}
 		} catch (NoSuchAlgorithmException | InvalidKeyException | UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 

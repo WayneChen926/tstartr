@@ -10,6 +10,8 @@ spring:
           channelToken: 'UShFzDZGIRVE0Wn8+b7ZntGhgV3yOjWI+VmMnIEAzhmdMfJOfYQb/Ufcqcwqr34Z7peiEUByXd8Z+0SZbMu1mhiint6UpTL8+FXU+zpVl/3Er/f33Id38UnbFc9aIbMA/U3T1jHifNZOHPbhwvej5QdB04t89/1O/w1cDnyilFU='
           to: 'U2dbb348e5a46eb147511a26f0ef6f083'
 line:
-  image:
+  messages:
     originalContentUrl: 'https://yt3.ggpht.com/a/AATXAJyDkD6dAgxqSk232OgBeW12_meiJgSI2pw7A9NBog=s900-c-k-c0x00ffffff-no-rj'
     previewImageUrl: 'https://yt3.ggpht.com/a/AATXAJyDkD6dAgxqSk232OgBeW12_meiJgSI2pw7A9NBog=s900-c-k-c0x00ffffff-no-rj'
+    thumbnailImageUrl: 'https://play-lh.googleusercontent.com/i_KEGjIAYqatVluupykgNlrJMbUFiDh5ADQFO1b2ANolZYa5huKc3PGBUcduUZxTC7D6'
+    uri: 'https://store.line.me/stickershop/home/general/zh-Hant'

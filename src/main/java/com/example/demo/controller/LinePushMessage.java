@@ -35,7 +35,6 @@ public class LinePushMessage {
 
 	@PostMapping("/push")
 	public void push(@RequestBody EventWrapper events) throws JsonProcessingException {
-
 		String push = null;
 		String to = null;
 		List<TextMessages> lms = new ArrayList<>();
