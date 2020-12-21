@@ -48,10 +48,10 @@ public class LineReplyMessage {
 	String originalContentUrl;
 	@Value("${line.messages.previewImageUrl}")
 	String previewImageUrl;
-	
+
 	@Value("${line.messages.thumbnailImageUrl}")
 	String thumbnailImageUrl;
-	
+
 	@Value("${line.messages.uri}")
 	String uri;
 
@@ -66,21 +66,19 @@ public class LineReplyMessage {
 
 	@Autowired
 	ImageMessages imageMessages;
-	
+
 	@Autowired
 	TemplateMessages templateMessages;
-	
+
 	@Autowired
 	Template template;
-	
+
 	@Autowired
 	DefaultAction defaultAction;
 
 	@PostMapping("/callback")
-	public ResponseEntity<String> reply(
-			@RequestBody EventWrapper events, 
-			@RequestHeader("X-Line-Signature") String line_headers)
-			throws JsonProcessingException {
+	public ResponseEntity<String> reply(@RequestBody EventWrapper events,
+			@RequestHeader("X-Line-Signature") String line_headers) throws JsonProcessingException {
 
 		String reply = "https://api.line.me/v2/bot/message/reply";
 		String replyToken = null;
@@ -102,10 +100,14 @@ public class LineReplyMessage {
 
 		RestTemplate restTemplate = new RestTemplate();
 
-		ResponseEntity<String> response = restTemplate.exchange(reply, HttpMethod.POST, sendMessage(message, replyToken),
-				String.class);
-		
-		return response;
+		if (message != null) {
+			ResponseEntity<String> response = restTemplate.exchange(reply, HttpMethod.POST,
+					sendMessage(message, replyToken), String.class);
+			return response;
+		}else {
+			return null;
+		}
+
 	}
 
 	public HttpEntity<String> sendMessage(Message message, String replyToken) throws JsonProcessingException {
@@ -134,11 +136,11 @@ public class LineReplyMessage {
 
 		} else if (message.getType().equals("text")) {
 //		  	  ------------------- 文字JSON -------------------
-			if(message.getText().equals("表單")){
-				
+			if (message.getText().equals("表單")) {
+
 				templateMessages.setType("template");
 				templateMessages.setAltText("This is a buttons template");
-				
+
 				template.setType("buttons");
 				template.setThumbnailImageUrl(thumbnailImageUrl);
 				template.setImageAspectRatio("rectangle");
@@ -146,11 +148,11 @@ public class LineReplyMessage {
 				template.setImageBackgroundColor("#FFFFFF");
 				template.setTitle("貼圖");
 				template.setText("Please select");
-				
+
 				defaultAction.setType("uri");
 				defaultAction.setLabel("View detail");
 				defaultAction.setUri(uri);
-				
+
 				Actions actions = new Actions();
 				actions.setType("postback");
 				actions.setLabel("Buy");
@@ -167,26 +169,25 @@ public class LineReplyMessage {
 				actionsList.add(actions);
 				actionsList.add(actions1);
 				actionsList.add(actions2);
-				
+
 				template.setActions(actionsList);
 				template.setDefaultAction(defaultAction);
 				templateMessages.setTemplate(template);
 				templateList.add(templateMessages);
-				
+
 				reply.setReplyToken(replyToken);
 				reply.setMessages(templateList);
-				
+
 				return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
-			}
-			else {
-			textMessages.setType("text");
-			textMessages.setText("收到您的訊息: " + message.getText());
-			textList.add(textMessages);
+			} else {
+				textMessages.setType("text");
+				textMessages.setText("收到您的訊息: " + message.getText());
+				textList.add(textMessages);
 
-			reply.setReplyToken(replyToken);
-			reply.setMessages(textList);
+				reply.setReplyToken(replyToken);
+				reply.setMessages(textList);
 
-			return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
+				return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
 			}
 		} else if (message.getType().equals("image")) {
 //		------------------- image JSON -------------------
