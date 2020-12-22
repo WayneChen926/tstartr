@@ -17,6 +17,9 @@ import com.example.demo.util.VerificationLine;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 public class LineReplyMessage {
 	
@@ -39,6 +42,7 @@ public class LineReplyMessage {
 		String reply = "https://api.line.me/v2/bot/message/reply";
 		String replyToken = null;
 		EventWrapper events = objectMapper.readValue(requestBody, EventWrapper.class);
+		log.info("{}",requestBody);
 		
 //    ------------------- User Evnet -----------------
 		for (Event event : events.getEvents()) {

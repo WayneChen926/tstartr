@@ -15,3 +15,9 @@ line:
     previewImageUrl: 'https://yt3.ggpht.com/a/AATXAJyDkD6dAgxqSk232OgBeW12_meiJgSI2pw7A9NBog=s900-c-k-c0x00ffffff-no-rj'
     thumbnailImageUrl: 'https://play-lh.googleusercontent.com/i_KEGjIAYqatVluupykgNlrJMbUFiDh5ADQFO1b2ANolZYa5huKc3PGBUcduUZxTC7D6'
     uri: 'https://store.line.me/stickershop/home/general/zh-Hant'
+#logging:
+#  level:
+#    root: DEBUG
+#    org.springframework.web: DEBUG
+#    com.howtodoinjava: DEBUG
+#    org.hibernate: ERROR
