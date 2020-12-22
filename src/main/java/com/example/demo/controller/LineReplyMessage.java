@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -27,7 +28,9 @@ import com.example.demo.entity.DefaultAction;
 import com.example.demo.entity.Event;
 import com.example.demo.entity.EventWrapper;
 import com.example.demo.entity.ImageMessages;
+import com.example.demo.entity.LocationMessage;
 import com.example.demo.entity.Message;
+import com.example.demo.entity.Postback;
 import com.example.demo.entity.Reply;
 import com.example.demo.entity.StickerMessages;
 import com.example.demo.entity.Template;
@@ -59,6 +62,11 @@ public class LineReplyMessage {
 	Reply reply;
 
 	@Autowired
+	Message message;
+	@Autowired
+	Postback postback;
+
+	@Autowired
 	TextMessages textMessages;
 
 	@Autowired
@@ -71,19 +79,25 @@ public class LineReplyMessage {
 	TemplateMessages templateMessages;
 
 	@Autowired
+	LocationMessage locationMessage;
+
+	@Autowired
 	Template template;
 
 	@Autowired
 	DefaultAction defaultAction;
 
+	// 物件轉JSON
+	ObjectMapper objectMapper = new ObjectMapper();
+
 	@PostMapping("/callback")
-	public ResponseEntity<String> reply(@RequestBody EventWrapper events,
+	public ResponseEntity<String> reply(@RequestBody String requestBody,
 			@RequestHeader("X-Line-Signature") String line_headers) throws JsonProcessingException {
 
 		String reply = "https://api.line.me/v2/bot/message/reply";
 		String replyToken = null;
-		Message message = null;
-
+		EventWrapper events = objectMapper.readValue(requestBody, EventWrapper.class);
+		
 //    ------------------- User Evnet -----------------
 		for (Event event : events.getEvents()) {
 			replyToken = event.getReplyToken();
@@ -99,24 +113,29 @@ public class LineReplyMessage {
 //		String image = "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"image\",\"originalContentUrl\":\""+originalContentUrl+"\",\"previewImageUrl\":\""+previewImageUrl+"\"}]}";;
 
 		RestTemplate restTemplate = new RestTemplate();
+		if (checkFromLine(requestBody, line_headers)) {
+			System.out.println("驗證成功");			
+			if (message != null) {
+				ResponseEntity<String> response = restTemplate.exchange(reply, HttpMethod.POST,
+						sendMessage(message, replyToken), String.class);
+				return response;
+			} else {
+				
+				return null;
+			}
 
-		if (message != null) {
-			ResponseEntity<String> response = restTemplate.exchange(reply, HttpMethod.POST,
-					sendMessage(message, replyToken), String.class);
-			return response;
 		}else {
+			System.out.println("驗證失敗");
 			return null;
 		}
-
 	}
 
 	public HttpEntity<String> sendMessage(Message message, String replyToken) throws JsonProcessingException {
-		// 物件轉JSON
-		ObjectMapper objectMapper = new ObjectMapper();
 		List<TextMessages> textList = new ArrayList<>();
 		List<StickerMessages> stickerList = new ArrayList<>();
 		List<ImageMessages> imageList = new ArrayList<>();
 		List<TemplateMessages> templateList = new ArrayList<>();
+		List<LocationMessage> locationList = new ArrayList<>();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json");
@@ -156,11 +175,11 @@ public class LineReplyMessage {
 				Actions actions = new Actions();
 				actions.setType("postback");
 				actions.setLabel("Buy");
-				actions.setData("action=buy&itemid=123");
+				actions.setData("測試購買");
 				Actions actions1 = new Actions();
 				actions1.setType("postback");
 				actions1.setLabel("Add to cart");
-				actions1.setData("action=add&itemid=123");
+				actions1.setData("測試加入購物車");
 				Actions actions2 = new Actions();
 				actions2.setType("uri");
 				actions2.setLabel("View detail");
@@ -177,6 +196,19 @@ public class LineReplyMessage {
 
 				reply.setReplyToken(replyToken);
 				reply.setMessages(templateList);
+
+				return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
+
+			} else if (message.getText().equals("地圖")) {
+				locationMessage.setType("location");
+				locationMessage.setTitle("光華商場");
+				locationMessage.setAddress("100台北市中正區八德路一段");
+				locationMessage.setLatitude(new BigDecimal(25.04524731439183));
+				locationMessage.setLongitude(new BigDecimal(121.53196609551186));
+				locationList.add(locationMessage);
+
+				reply.setReplyToken(replyToken);
+				reply.setMessages(locationList);
 
 				return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
 			} else {
@@ -213,6 +245,7 @@ public class LineReplyMessage {
 		}
 	}
 
+//	驗證 是否為line 傳過來的訊息
 	public boolean checkFromLine(String requestBody, String X_Line_Signature) {
 		SecretKeySpec key = new SecretKeySpec(channelSecret.getBytes(), "HmacSHA256");
 		Mac mac;
