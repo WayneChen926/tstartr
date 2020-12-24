@@ -23,4 +23,9 @@ public class Message {
     private String longitude;
     private String packageId;
     private String stickerId;
+    
+//    facebook
+    private String mid;
+    private String is_echo;
+    private String app_id;
 }

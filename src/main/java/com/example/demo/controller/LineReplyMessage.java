@@ -32,13 +32,16 @@ public class LineReplyMessage {
 	@Autowired
 	ResponseMessage responseMessage;
 	
+//	@Autowired
+//	RichMenuTemplate rt;
+	
 	// Jackson ObjectMapper
 	ObjectMapper objectMapper = new ObjectMapper();
 
 	@PostMapping("/callback")
 	public ResponseEntity<String> reply(@RequestBody String requestBody,
 			@RequestHeader("X-Line-Signature") String line_headers) throws JsonProcessingException {
-
+		RestTemplate restTemplate = new RestTemplate();
 		String reply = "https://api.line.me/v2/bot/message/reply";
 		String replyToken = null;
 		EventWrapper events = objectMapper.readValue(requestBody, EventWrapper.class);
@@ -51,13 +54,13 @@ public class LineReplyMessage {
 			System.out.println("JSON:\n" + event);
 			System.out.println("message:" + message);
 		}
+//		rt.setting();
 //    -------------------- JSON Data Text -----------------------------------
 //		String defalut = "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"text\",\"text\":\""+"無法判斷"+"\"}]}";
 //		String text = "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"text\",\"text\":\""+message+"\"}]}";
 //		String sticker = "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"sticker\",\"packageId\":\""+11537+"\",\"stickerId\":\""+52002734+"\"}]}";
 //		String image = "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"image\",\"originalContentUrl\":\""+originalContentUrl+"\",\"previewImageUrl\":\""+previewImageUrl+"\"}]}";;
-
-		RestTemplate restTemplate = new RestTemplate();
+		
 //		驗證 是否為line 傳過來的訊息
 		if (verificationLine.checkFromLine(requestBody, line_headers)) {
 			System.out.println("驗證成功");			

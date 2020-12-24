@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -11,8 +13,8 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DefaultAction {
-	private String type;
-	private String label;
-	private String uri;
+public class Entrys {
+	private String id;
+	private String time;
+	private List<Messaging> messaging;
 }

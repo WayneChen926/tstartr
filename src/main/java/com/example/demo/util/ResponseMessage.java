@@ -11,12 +11,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import com.example.demo.entity.Actions;
+import com.example.demo.entity.Columns;
 import com.example.demo.entity.DefaultAction;
 import com.example.demo.entity.ImageMessages;
 import com.example.demo.entity.LocationMessage;
 import com.example.demo.entity.Message;
 import com.example.demo.entity.Postback;
 import com.example.demo.entity.Reply;
+import com.example.demo.entity.RichMenu;
 import com.example.demo.entity.StickerMessages;
 import com.example.demo.entity.Template;
 import com.example.demo.entity.TemplateMessages;
@@ -77,6 +79,7 @@ public class ResponseMessage {
 		List<ImageMessages> imageList = new ArrayList<>();
 		List<TemplateMessages> templateList = new ArrayList<>();
 		List<LocationMessage> locationList = new ArrayList<>();
+		List<Columns> columnsList = new ArrayList<>();
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json");
@@ -153,7 +156,87 @@ public class ResponseMessage {
 				reply.setMessages(locationList);
 
 				return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
-			} else {
+			} else if(message.getText().equals("購物清單")){
+				
+				templateMessages.setType("template");
+				templateMessages.setAltText("This is a buttons template");
+				template.setType("carousel");
+				template.setImageAspectRatio("rectangle");
+				template.setImageSize("cover");
+				Columns columns = new Columns();
+				columns.setThumbnailImageUrl("https://image-cdn-flare.qdm.cloud/q591070f643292/image/cache/data/2019/10/06/2601298eca2cb7c7ee42a12fdd00cbd7-max-w-1024.jpg");
+				columns.setImageBackgroundColor("#FFFFFF");
+				columns.setTitle("攝影視覺行銷＋手機攝影技巧教學");
+				columns.setText("更多資訊請點進來");
+
+				defaultAction.setType("uri");
+				defaultAction.setLabel("View detail");
+				defaultAction.setUri("https://www.howhowphoto.com/product/product&product_id=315");
+				columns.setDefaultAction(defaultAction);
+				
+				Actions actions = new Actions();
+				actions.setType("postback");
+				actions.setLabel("Buy");
+				actions.setData("測試購買");
+				Actions actions1 = new Actions();
+				actions1.setType("postback");
+				actions1.setLabel("Add to cart");
+				actions1.setData("測試加入購物車");
+				Actions actions2 = new Actions();
+				actions2.setType("uri");
+				actions2.setLabel("View detail");
+				actions2.setUri(uri);
+				List<Actions> actionsList = new ArrayList<>();
+				actionsList.add(actions);
+				actionsList.add(actions1);
+				actionsList.add(actions2);
+				columns.setActions(actionsList);
+				columnsList.add(columns);
+				
+				
+				
+				Columns columns2 = new Columns();
+				columns2.setThumbnailImageUrl(thumbnailImageUrl);
+				columns2.setImageBackgroundColor("#000000");
+				columns2.setTitle("貼書商城");
+				columns2.setText("查看更多的貼圖");
+				DefaultAction defaultAction2 = new DefaultAction();
+				defaultAction2.setType("uri");
+				defaultAction2.setLabel("View detail");
+				defaultAction2.setUri(uri);
+				columns2.setDefaultAction(defaultAction2);
+				
+				Actions actions3 = new Actions();
+				actions3.setType("postback");
+				actions3.setLabel("Buy");
+				actions3.setData("測試購買");
+				Actions actions4 = new Actions();
+				actions4.setType("postback");
+				actions4.setLabel("Add to cart");
+				actions4.setData("測試加入購物車");
+				Actions actions5 = new Actions();
+				actions5.setType("uri");
+				actions5.setLabel("View detail");
+				actions5.setUri(uri);
+				
+				List<Actions> actionsList2 = new ArrayList<>();
+				actionsList2.add(actions3);
+				actionsList2.add(actions4);
+				actionsList2.add(actions5);
+				columns2.setActions(actionsList2);
+				columnsList.add(columns2);
+				
+				
+				
+				template.setColumns(columnsList);
+				templateMessages.setTemplate(template);
+				templateList.add(templateMessages);
+
+				reply.setReplyToken(replyToken);
+				reply.setMessages(templateList);
+				
+				return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);				
+			}else {
 				textMessages.setType("text");
 				textMessages.setText("收到您的訊息: " + message.getText());
 				textList.add(textMessages);
@@ -185,5 +268,12 @@ public class ResponseMessage {
 
 			return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
 		}
+	}
+	public HttpEntity<String> richmenu(RichMenu json) throws JsonProcessingException{
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "application/json");
+		headers.add("Authorization", "Bearer {" + channelToken + "}");
+		
+		return new HttpEntity<>(objectMapper.writeValueAsString(json), headers);
 	}
 }

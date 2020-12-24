@@ -11,8 +11,11 @@ import lombok.Data;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DefaultAction {
-	private String type;
-	private String label;
-	private String uri;
+public class Messaging {
+	private String messaging_type;
+	private Sender sender;
+	private Recipient recipient;
+	private String timestamp;
+	private Read read;
+	private Message message;
 }
