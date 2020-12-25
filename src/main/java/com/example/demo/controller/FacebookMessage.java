@@ -40,13 +40,15 @@ public class FacebookMessage {
 	RestTemplate restTemplate = new RestTemplate();
 
 	@GetMapping("/webhook")
-	public ResponseEntity<String> webhookVerify(@RequestParam("hub.mode") String mode,
-			@RequestParam("hub.verify_token") String verifyToken, @RequestParam("hub.challenge") String challenge) {
-
+	public ResponseEntity<String> webhookVerify(
+	        @RequestParam("hub.mode") String mode,
+			@RequestParam("hub.verify_token") String verifyToken, 
+			@RequestParam("hub.challenge") String challenge) {
+	    
 		if (mode.equals("subscribe") && verifyToken.equals("waynechen0926")) {
 			return new ResponseEntity<String>(challenge, HttpStatus.OK);
 		} else {
-			return null;
+			return new ResponseEntity<String>(challenge, HttpStatus.OK);
 		}
 	}
 
@@ -54,35 +56,49 @@ public class FacebookMessage {
 	public ResponseEntity<String> webhook(@RequestBody String body)
 			throws JsonMappingException, JsonProcessingException {
 		log.debug("{}", body);
-
+		System.out.println(body);
 		String url = "https://graph.facebook.com/v9.0/me/messages?access_token=" + pageAccessToken;
-//		System.out.println(url);
+		System.out.println(url);
 		entryWrapper = objectMapper.readValue(body, EntryWrapper.class);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/json");
 
 		String psid = null;
-//		String text = null;
+		String text = null;
+
+		System.out.println(objectMapper.writeValueAsString(entryWrapper));
+
+		Messaging messaging2 = null;
 
 		for (Entrys entry : entryWrapper.getEntry()) {
 			for (Messaging messaging : entry.getMessaging()) {
 				psid = messaging.getSender().getId();
-//				text = messaging.getMessage().getText();
+				System.out.println("PSID = " + psid);
+				messaging2 = messaging;
+				if (messaging.getRead() == null) {
+					text = messaging.getMessage().getText();
+				}
 			}
 		}
-
-			Messaging messaging = new Messaging();
-			Recipient recipient = new Recipient();
-			Message message = new Message();
-			messaging.setMessaging_type("RESPONSE");
-			recipient.setId(psid);
-			message.setText("測試訊息");
-			messaging.setRecipient(recipient);
-			messaging.setMessage(message);
-			System.out.println(objectMapper.writeValueAsString(messaging));
-			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST,
-					new HttpEntity<>(objectMapper.writeValueAsString(messaging), headers), String.class);
-			return response;
-
+		if (messaging2.getMessage() != null) {
+			if (!messaging2.getMessage().getText().equals("測試")) {
+				Messaging messaging = new Messaging();
+				Recipient recipient = new Recipient();
+				Message message = new Message();
+				messaging.setMessaging_type("RESPONSE");
+				recipient.setId(psid);
+				message.setText("測試");
+				messaging.setRecipient(recipient);
+				messaging.setMessage(message);
+				System.out.println(objectMapper.writeValueAsString(messaging));
+				ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST,
+						new HttpEntity<>(objectMapper.writeValueAsString(messaging), headers), String.class);
+				return response;
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
 	}
 }
