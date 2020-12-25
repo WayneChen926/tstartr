@@ -49,6 +49,7 @@ public class LineReplyMessage {
         // ------------------- User Evnet -----------------
         for (Event event : events.getEvents()) {
             replyToken = event.getReplyToken();
+            message = event.getMessage();
             event2 = event;
             System.out.println("JSON:\n" + event);
             System.out.println("message:" + message);
