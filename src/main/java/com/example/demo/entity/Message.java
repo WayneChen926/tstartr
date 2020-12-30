@@ -1,10 +1,9 @@
 package com.example.demo.entity;
 
+import java.util.List;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.Data;
 
 @Component
@@ -26,6 +25,9 @@ public class Message {
     
 //    facebook
     private String mid;
+    private Attachments attachment;
+    private List<Attachments> attachments;
+    private List<Quick_replies> quick_replies;
     private String is_echo;
     private String app_id;
 }

@@ -17,5 +17,6 @@ public class Messaging {
 	private Recipient recipient;
 	private String timestamp;
 	private Read read;
+	private Postback postback;
 	private Message message;
 }

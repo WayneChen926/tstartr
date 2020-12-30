@@ -15,4 +15,10 @@ public class DefaultAction {
 	private String type;
 	private String label;
 	private String uri;
+	
+//	FB
+	private String url;
+	private boolean messenger_extensions;
+	private String webview_height_ratio;
+	private String fallback_url;
 }
