@@ -48,7 +48,7 @@ public class FacebookMessage {
     
     @GetMapping("/googleAppsScript")
     public String hello() {
-        return "Call API"+new Timestamp(System.currentTimeMillis());
+        return "Call API "+new Timestamp(System.currentTimeMillis());
     }
     
     @GetMapping("/webhook")
