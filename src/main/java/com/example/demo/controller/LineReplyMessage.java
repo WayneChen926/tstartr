@@ -69,7 +69,7 @@ public class LineReplyMessage {
         // 驗證 是否為line 傳過來的訊息
         if (verificationLine.checkFromLine(requestBody, line_headers)) {
             System.out.println("驗證成功");
-            if (event2.getMessage()!= null) {
+            if (event2.getMessage() != null) {
                 ResponseEntity<String> response = restTemplate.exchange(reply, HttpMethod.POST,
                         responseMessage.sendMessage(message, replyToken), String.class);
                 return response;

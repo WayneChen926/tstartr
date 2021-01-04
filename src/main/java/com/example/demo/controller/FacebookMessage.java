@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,12 @@ public class FacebookMessage {
     ObjectMapper objectMapper = new ObjectMapper();
 
     RestTemplate restTemplate = new RestTemplate();
-
+    
+    @GetMapping("/googleAppsScript")
+    public String hello() {
+        return "Call API"+new Timestamp(System.currentTimeMillis());
+    }
+    
     @GetMapping("/webhook")
     public ResponseEntity<String> webhookVerify(@RequestParam("hub.mode") String mode,
             @RequestParam("hub.verify_token") String verifyToken,
@@ -74,8 +80,10 @@ public class FacebookMessage {
         Messaging messaging2 = null;
 
         for (Entrys entry : entryWrapper.getEntry()) {
-            for (Messaging messaging : entry.getMessaging()) {
-                messaging2 = messaging;
+            if (entry.getMessaging() != null) {
+                for (Messaging messaging : entry.getMessaging()) {
+                    messaging2 = messaging;
+                }
             }
         }
         try {
@@ -255,8 +263,7 @@ public class FacebookMessage {
                 } else {
                     return new ResponseEntity<String>("null", HttpStatus.OK);
                 }
-            }
-            else {
+            } else {
                 return new ResponseEntity<String>("null", HttpStatus.OK);
             }
         } catch (Exception e) {
