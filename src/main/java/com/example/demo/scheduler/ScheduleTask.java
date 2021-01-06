@@ -1,5 +1,6 @@
 package com.example.demo.scheduler;
 
+import java.sql.Timestamp;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -13,7 +14,7 @@ public class ScheduleTask {
     @Value("${spring.boot.admin.notify.line.channelToken}")
     private String channelToken;
 
-    @Scheduled(cron = "0 0/25 * * * 1-5")
+    @Scheduled(cron = "0 */30 6-23 * * 1-5")
     public void printSay() {
         RestTemplate rt = new RestTemplate();
         try {
@@ -22,7 +23,7 @@ public class ScheduleTask {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            System.out.println("排程執行完畢");
+            System.out.println("排程執行完畢 " + new Timestamp(System.currentTimeMillis()));
         }
     }
 

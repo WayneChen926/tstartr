@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import com.example.demo.entity.Event;
 import com.example.demo.entity.EventWrapper;
-import com.example.demo.entity.Message;
 import com.example.demo.util.ResponseMessage;
 import com.example.demo.util.VerificationLine;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,11 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 public class LineReplyMessage {
 
     @Autowired
-    Message message;
-
-    @Autowired
     VerificationLine verificationLine;
 
+    @Autowired
+    Event event;
+    
     @Autowired
     ResponseMessage responseMessage;
 
@@ -40,22 +39,20 @@ public class LineReplyMessage {
     @PostMapping("/callback")
     public ResponseEntity<String> reply(@RequestBody String requestBody,
             @RequestHeader("X-Line-Signature") String line_headers) throws JsonProcessingException {
+
         RestTemplate restTemplate = new RestTemplate();
         String reply = "https://api.line.me/v2/bot/message/reply";
         String replyToken = null;
         EventWrapper events = objectMapper.readValue(requestBody, EventWrapper.class);
-        Event event2 = new Event();
         log.info("{}", requestBody);
         // ------------------- User Evnet -----------------
         for (Event event : events.getEvents()) {
             replyToken = event.getReplyToken();
-            message = event.getMessage();
-            event2 = event;
+            this.event = event;
             System.out.println("JSON:\n" + event);
-            System.out.println("message:" + message);
+            System.out.println("message:" + event.getMessage());
         }
         System.out.println(requestBody);
-        // rt.setting();
         // -------------------- JSON Data Text -----------------------------------
         // String defalut =
         // "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"text\",\"text\":\""+"無法判斷"+"\"}]}";
@@ -69,9 +66,9 @@ public class LineReplyMessage {
         // 驗證 是否為line 傳過來的訊息
         if (verificationLine.checkFromLine(requestBody, line_headers)) {
             System.out.println("驗證成功");
-            if (event2.getMessage() != null) {
+            if (event.getMessage() != null) {
                 ResponseEntity<String> response = restTemplate.exchange(reply, HttpMethod.POST,
-                        responseMessage.sendMessage(message, replyToken), String.class);
+                        responseMessage.sendMessage(event.getMessage(), replyToken), String.class);
                 return response;
             } else {
 
