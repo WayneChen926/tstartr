@@ -14,7 +14,7 @@ public class ScheduleTask {
     @Value("${spring.boot.admin.notify.line.channelToken}")
     private String channelToken;
 
-    @Scheduled(cron = "0 */30 6-23 * * 1-5")
+    @Scheduled(cron = "0 */30 8-23 * * 1-5")
     public void printSay() {
         RestTemplate rt = new RestTemplate();
         try {

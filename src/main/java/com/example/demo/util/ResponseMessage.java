@@ -106,7 +106,7 @@ public class ResponseMessage {
 
             reply.setReplyToken(replyToken);
             reply.setMessages(stickerList);
-
+            
             return new HttpEntity<>(objectMapper.writeValueAsString(reply), headers);
 
         } else if (message.getType().equals("text")) {

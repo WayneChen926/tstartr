@@ -17,7 +17,7 @@ line:
     uri: 'https://store.line.me/stickershop/home/general/zh-Hant'
 facebook:
   messages:
-    pageAccessToken: 'EAAVj9zXaV1gBAFalmhGchV4dSERFiubQQaYIoqePj1Ko5CSZAXcV5j1yfaf7Y43jyqTVYyvXwGkSvI8XMPjIvKLtBWf3lqIBgsAxZBXrYD3MhURtHfQNmrNhZB3WFr6hFpABQvOKmogRePK7d7UgxUpa7ZAOSkDcQxENZATsSneYcCIz5B1y1'
+    pageAccessToken: 'EAAVj9zXaV1gBAPZBL68VzuA2FXpbQs0zZAeI7SRl8HgWfCDIaZCaZBWu8xqTPfNCMLPZCuZCFtv2ZAtD9PMXE3JiJHpcoARhB3OcqN8QB8rzz7rT8MDGxqMVqYCH1fRRYNeLGvCZBZCL6iFBc1wDfcLH0zYfmZBApJ6dxY4waQ5lCRZAIZCO9xp0wJyL'
 #logging:
 #  level:
 #    root: DEBUG

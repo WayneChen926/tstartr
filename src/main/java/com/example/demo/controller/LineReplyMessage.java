@@ -72,11 +72,11 @@ public class LineReplyMessage {
                 return response;
             } else {
 
-                return new ResponseEntity<String>("null", HttpStatus.OK);
+                return new ResponseEntity<String>(HttpStatus.OK);
             }
         } else {
             System.out.println("驗證失敗");
-            return new ResponseEntity<String>("null", HttpStatus.OK);
+            return new ResponseEntity<String>(HttpStatus.OK);
         }
     }
 }
