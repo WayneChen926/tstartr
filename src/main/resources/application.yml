@@ -1,4 +1,10 @@
 spring:
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML5
   application:
     name: ServiceAdmin
   boot:
@@ -17,7 +23,7 @@ line:
     uri: 'https://store.line.me/stickershop/home/general/zh-Hant'
 facebook:
   messages:
-    pageAccessToken: 'EAAVj9zXaV1gBAPZBL68VzuA2FXpbQs0zZAeI7SRl8HgWfCDIaZCaZBWu8xqTPfNCMLPZCuZCFtv2ZAtD9PMXE3JiJHpcoARhB3OcqN8QB8rzz7rT8MDGxqMVqYCH1fRRYNeLGvCZBZCL6iFBc1wDfcLH0zYfmZBApJ6dxY4waQ5lCRZAIZCO9xp0wJyL'
+    pageAccessToken: 'EAAVj9zXaV1gBAPYBwmlVuOEYvdfc5ylzgpHeTZB4ZBxxOlPCB5rclDScGdoZCNAdZA8ij2nm7cHQ9pkkzFLtGYisdouQ9AeKJoOZChhPIXfb3oTZC2LGuFiFX3vsJbLt3YQyzgfEL0VhZBQgLCZCUmnkC0641Cl28oP2nCd8kMPowwZDZD'
 #logging:
 #  level:
 #    root: DEBUG

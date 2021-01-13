@@ -286,10 +286,10 @@ public class FacebookMessage {
                                         String.class);
                         return response;
                     } else {
-                        return new ResponseEntity<String>("null", HttpStatus.OK);
+                        return new ResponseEntity<String>(HttpStatus.OK);
                     }
                 } else {
-                    return new ResponseEntity<String>("null", HttpStatus.OK);
+                    return new ResponseEntity<String>(HttpStatus.OK);
                 }
             } else if (!change.getValue().getFrom().getId().equals("2059605444295770")
                     && entry.getChanges() != null && change.getValue().getVerb().equals("add")
@@ -316,12 +316,12 @@ public class FacebookMessage {
                         String.class);
                 return response;
             } else {
-                return new ResponseEntity<String>("null", HttpStatus.OK);
+                return new ResponseEntity<String>(HttpStatus.OK);
             }
         } catch (Exception e) {
             System.out.println("error");
             e.printStackTrace();
-            return new ResponseEntity<String>("null", HttpStatus.OK);
+            return new ResponseEntity<String>(HttpStatus.OK);
         }
     }
 }
