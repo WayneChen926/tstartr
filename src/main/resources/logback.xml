@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE xml>
 
 <configuration scan="true" scanPeriod="3 seconds">
     <!--設定日誌輸出為控制檯-->

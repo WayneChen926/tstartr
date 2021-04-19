@@ -1,3 +1,8 @@
+server:
+    port: 8080
+    tomcat:
+        uri-encoding: UTF-8
+
 spring:
   thymeleaf:
     cache: false
@@ -24,6 +29,32 @@ line:
 facebook:
   messages:
     pageAccessToken: 'EAAVj9zXaV1gBAPYBwmlVuOEYvdfc5ylzgpHeTZB4ZBxxOlPCB5rclDScGdoZCNAdZA8ij2nm7cHQ9pkkzFLtGYisdouQ9AeKJoOZChhPIXfb3oTZC2LGuFiFX3vsJbLt3YQyzgfEL0VhZBQgLCZCUmnkC0641Cl28oP2nCd8kMPowwZDZD'
+
+logging:
+    logback:
+        rollingpolicy:
+            max-history: 30
+            max-file-size: 3MB
+            file-name-pattern: log/webhook.%d{yyyy-MM-dd}.%i.log
+    file:
+        name: log/webhook.log
+        max-size: 3MB
+        max-history: 30
+    level:
+        com.example.demo: trace
+        com.example.demo.service: trace
+        org:
+            springframework:
+                web:
+                    client:
+                        RestTemplate: DEBUG
+        root: INFO
+    pattern:
+        console: '%d{yyyy/MM/dd HH:mm:ss} [%thread] %-5level %logger{50}.%M [%line]
+            - %msg%n'
+        file: '%d{yyyy/MM/dd HH:mm:ss} == [%thread] == %-5level == %logger{50}.%M
+            == - %msg%n' 
+
 #logging:
 #  level:
 #    root: DEBUG

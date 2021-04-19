@@ -26,14 +26,10 @@ public class LineReplyMessage {
 
     @Autowired
     Event event;
-    
+
     @Autowired
     ResponseMessage responseMessage;
 
-    // @Autowired
-    // RichMenuTemplate rt;
-
-    // Jackson ObjectMapper
     ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/callback")
@@ -49,23 +45,14 @@ public class LineReplyMessage {
         for (Event event : events.getEvents()) {
             replyToken = event.getReplyToken();
             this.event = event;
-            System.out.println("JSON:\n" + event);
-            System.out.println("message:" + event.getMessage());
+            log.trace("JSON:\n" + event);
+            log.trace("message:" + event.getMessage());
         }
-        System.out.println(requestBody);
-        // -------------------- JSON Data Text -----------------------------------
-        // String defalut =
-        // "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"text\",\"text\":\""+"無法判斷"+"\"}]}";
-        // String text =
-        // "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"text\",\"text\":\""+message+"\"}]}";
-        // String sticker =
-        // "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"sticker\",\"packageId\":\""+11537+"\",\"stickerId\":\""+52002734+"\"}]}";
-        // String image =
-        // "{\"replyToken\":\""+replyToken+"\",\"messages\":[{\"type\":\"image\",\"originalContentUrl\":\""+originalContentUrl+"\",\"previewImageUrl\":\""+previewImageUrl+"\"}]}";;
+        log.trace("requestBody={}",requestBody);
 
         // 驗證 是否為line 傳過來的訊息
         if (verificationLine.checkFromLine(requestBody, line_headers)) {
-            System.out.println("驗證成功");
+            log.trace("驗證成功");
             if (event.getMessage() != null) {
                 ResponseEntity<String> response = restTemplate.exchange(reply, HttpMethod.POST,
                         responseMessage.sendMessage(event.getMessage(), replyToken), String.class);
@@ -75,7 +62,7 @@ public class LineReplyMessage {
                 return new ResponseEntity<String>(HttpStatus.OK);
             }
         } else {
-            System.out.println("驗證失敗");
+            log.error("驗證失敗");
             return new ResponseEntity<String>(HttpStatus.OK);
         }
     }

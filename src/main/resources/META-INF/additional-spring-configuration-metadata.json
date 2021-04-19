@@ -1,0 +1,47 @@
+{"properties": [
+  {
+    "name": "spring.boot.admin.notify.line.to",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.boot.admin.notify.line.to'"
+  },
+  {
+    "name": "spring.boot.admin.notify.line.enabled",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.boot.admin.notify.line.enabled'"
+  },
+  {
+    "name": "spring.boot.admin.notify.line.channelSecret",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.boot.admin.notify.line.channelSecret'"
+  },
+  {
+    "name": "spring.boot.admin.notify.line.channelToken",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.boot.admin.notify.line.channelToken'"
+  },
+  {
+    "name": "line.messages.thumbnail-image-url",
+    "type": "java.lang.String",
+    "description": "A description for 'line.messages.thumbnail-image-url'"
+  },
+  {
+    "name": "line.messages.originalContentUrl",
+    "type": "java.lang.String",
+    "description": "A description for 'line.messages.originalContentUrl'"
+  },
+  {
+    "name": "line.messages.previewImageUrl",
+    "type": "java.lang.String",
+    "description": "A description for 'line.messages.previewImageUrl'"
+  },
+  {
+    "name": "line.messages.uri",
+    "type": "java.lang.String",
+    "description": "A description for 'line.messages.uri'"
+  },
+  {
+    "name": "facebook.messages.page-access-token",
+    "type": "java.lang.String",
+    "description": "A description for 'facebook.messages.page-access-token'"
+  }
+]}
